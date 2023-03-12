@@ -24,13 +24,28 @@ fi
 
 info "### Run following commands to bootstrap Kubernetes cluster:\\n"
 
+cat > kubeadm-config.yaml << EOF
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: unix:///var/run/containerd/containerd.sock
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: ${KUBERNETES_VER}
+controlPlaneEndpoint: k8scp:6443
+networking:
+  podSubnet: 192.168.0.0/16
+EOF
+
 i=0
 for MASTER in $TR_MASTER_IPS; do
     if [ $i -eq "0" ]; then
         # As temporary fix we have to disable kubeProxyReplacement for Cilium, https://github.com/cilium/cilium/pull/16084
+        scp -o 'StrictHostKeyChecking no' kubeadm-config.yaml ${TR_USERNAME}@${MASTER}:/tmp/
         ssh -o 'StrictHostKeyChecking no' -l ${TR_USERNAME} ${MASTER} /bin/bash <<-EOF
           set -eux
-          sudo kubeadm init --kubernetes-version=${KUBERNETES_VER} --cri-socket unix:///run/containerd/containerd.sock --control-plane-endpoint k8scp:6443 --upload-certs | tee kubeadm-init.log
+          sudo kubeadm init --config /tmp/kubeadm-config.yaml --upload-certs | tee kubeadm-init.log
           mkdir -p /home/${TR_USERNAME}/.kube
           sudo cp /etc/kubernetes/admin.conf /home/${TR_USERNAME}/.kube/config
           sudo chown ${TR_USERNAME}:users /home/${TR_USERNAME}/.kube/config
@@ -63,14 +78,13 @@ done
 scp -o 'StrictHostKeyChecking no' ${TR_USERNAME}@${MASTER}:/home/${TR_USERNAME}/.kube/config ./admin.conf
 export KUBECONFIG=`pwd`/admin.conf
 
-#RELEASE=$(curl -sSL https://dl.k8s.io/release/stable.txt)
 RELEASE=$KUBERNETES_VER
 curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubectl
 chmod +x kubectl
 ./kubectl get nodes
 
 log ""
-log "WARNING!!! To start with K8s cluster please run following command:"
+log "WARNING!!! To start play with K8s cluster please run following command:"
 log "export KUBECONFIG=`pwd`/admin.conf"
 log "./kubectl get nodes"
 log ""

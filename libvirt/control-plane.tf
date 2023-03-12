@@ -115,7 +115,7 @@ resource "null_resource" "control_plane_provision" {
   }
 
   provisioner "remote-exec" {
-    script = "provision-k8s-node.sh"
+    script = "provision-os-node.sh"
   }
 }
 
@@ -155,19 +155,27 @@ resource "null_resource" "control_plane_provision_k8s_containerd" {
   }
 
   provisioner "file" {
-    source      = "provision-k8s-containerd.sh"
-    destination = "/tmp/provision-k8s-containerd.sh"
+    source      = "provision-k8s-node.sh"
+    destination = "/tmp/provision-k8s-node.sh"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "chmod +x /tmp/provision-k8s-containerd.sh",
-      "/tmp/provision-k8s-containerd.sh ${var.containerd_version} ${var.kubernetes_version} ${libvirt_domain.control_plane.0.network_interface.0.addresses.0}",
+      "chmod +x /tmp/provision-k8s-node.sh",
+      "/tmp/provision-k8s-node.sh ${var.containerd_version} ${var.kubernetes_version} ${libvirt_domain.control_plane.0.network_interface.0.addresses.0}",
     ]
   }
 
+  provisioner "file" {
+    source      = "provision-k8s-cp.sh"
+    destination = "/tmp/provision-k8s-cp.sh"
+  }
+
   provisioner "remote-exec" {
-    script = "provision-k8s-helm.sh"
+    inline = [
+      "chmod +x /tmp/provision-k8s-cp.sh",
+      "/tmp/provision-k8s-cp.sh ${var.helm_version} ${var.kubernetes_version}", 
+    ]
   }
 }
 
