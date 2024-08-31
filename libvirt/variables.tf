@@ -110,7 +110,7 @@ variable "kubernetes_release" {
 variable "kubernetes_version" {
   description = "Choose version of Kubernetes"
   type        = string
-  default     = "v1.28.8"
+  default     = "v1.29.8"
 }
 
 variable "helm_version" {
