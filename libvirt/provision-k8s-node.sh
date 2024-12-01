@@ -10,7 +10,7 @@ if [ "$#" -eq 4 ]; then
   CONTAINERD_URL=https://github.com/containerd/containerd/releases/download/v${CONTAINERD_VER}/cri-containerd-cni-${CONTAINERD_VER}-linux-amd64.tar.gz
 
   KUBERNETES_VER=$(echo "$2" | sed "s/v//g")
-  KUBERNETES_URL=https://storage.googleapis.com/kubernetes-release/release/${2}/bin/linux/amd64/{kubeadm,kubelet}
+  KUBERNETES_URL=https://dl.k8s.io/${2}/bin/linux/amd64/{kubeadm,kubelet}
 
   RELEASE_VER=$3
   RELEASE_URL=https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VER}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service
@@ -41,7 +41,7 @@ if curl --output /dev/null --silent --head --fail "$KUBERNETES_URL"; then
   echo "Installing Kubernetes $KUBERNETES_VER"
 else
   KUBERNETES_VER="$(curl -sSL https://dl.k8s.io/release/stable.txt)"
-  KUBERNETES_URL=https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VER}/bin/linux/amd64/{kubeadm,kubelet}
+  KUBERNETES_URL=https://dl.k8s.io/${KUBERNETES_VER}/bin/linux/amd64/{kubeadm,kubelet}
   echo "Installing Kubernetes $KUBERNETES_VER (latest)"
 fi
 
@@ -58,8 +58,8 @@ fi
 
 curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VER}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
 
-mkdir -p /etc/systemd/system/kubelet.service.d
-curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VER}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+#mkdir -p /etc/systemd/system/kubelet.service.d
+#curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VER}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 systemctl enable kubelet
 

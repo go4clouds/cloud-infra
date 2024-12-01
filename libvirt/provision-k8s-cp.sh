@@ -10,7 +10,7 @@ if [ "$#" -eq 2 ]; then
   HELM_URL=https://get.helm.sh/helm-${HELM_VER}-linux-amd64.tar.gz
 
   KUBERNETES_VER=$(echo "$2" | sed "s/v//g")
-  KUBERNETES_URL=https://storage.googleapis.com/kubernetes-release/release/${2}/bin/linux/amd64/kubectl
+  KUBERNETES_URL=https://dl.k8s.io/${2}/bin/linux/amd64/kubectl
 fi
 
 if curl --output /dev/null --silent --head --fail "$HELM_URL"; then
@@ -30,7 +30,7 @@ if curl --output /dev/null --silent --head --fail "$KUBERNETES_URL"; then
   echo "Installing Kubernetes $KUBERNETES_VER"
 else
   KUBERNETES_VER="$(curl -sSL https://dl.k8s.io/release/stable.txt)"
-  KUBERNETES_URL=https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VER}/bin/linux/amd64/kubectl
+  KUBERNETES_URL=https://dl.k8s.io/${KUBERNETES_VER}/bin/linux/amd64/kubectl
   echo "Installing Kubernetes $KUBERNETES_VER (latest)"
 fi
 
