@@ -104,7 +104,7 @@ variable "containerd_version" {
 variable "kubernetes_release" {
   description = "Choose Kubernetes release"
   type        = string
-  default     = "v0.16.2"
+  default     = "v0.17.12"
 }
 
 variable "kubernetes_version" {

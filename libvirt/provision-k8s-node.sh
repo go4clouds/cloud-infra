@@ -56,10 +56,10 @@ else
   echo "Installing Kubernetes release $RELEASE_VER (latest)"
 fi
 
-curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VER}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
+curl -sSL "https://raw.githubusercontent.com/kubernetes/release/refs/tags/${RELEASE_VER}/cmd/krel/templates/latest/kubelet/kubelet.service" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service
 
-#mkdir -p /etc/systemd/system/kubelet.service.d
-#curl -sSL "https://raw.githubusercontent.com/kubernetes/release/${RELEASE_VER}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+mkdir -p /etc/systemd/system/kubelet.service.d
+curl -sSL "https://raw.githubusercontent.com/kubernetes/release/refs/tags/${RELEASE_VER}/cmd/krel/templates/latest/kubeadm/10-kubeadm.conf" | sed "s:/usr/bin:${DOWNLOAD_DIR}:g" | tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
 systemctl enable kubelet
 
