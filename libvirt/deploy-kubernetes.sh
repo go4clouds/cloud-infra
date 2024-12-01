@@ -79,7 +79,7 @@ scp -o 'StrictHostKeyChecking no' ${TR_USERNAME}@${MASTER}:/home/${TR_USERNAME}/
 export KUBECONFIG=`pwd`/admin.conf
 
 RELEASE=$KUBERNETES_VER
-curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/kubectl
+curl -L --remote-name-all https://dl.k8s.io/${RELEASE}/bin/darwin/amd64/kubectl
 chmod +x kubectl
 ./kubectl get nodes
 
