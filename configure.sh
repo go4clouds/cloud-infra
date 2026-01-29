@@ -19,7 +19,7 @@ echo "Upgrade complete"
 if [ $OS_ID = "fedora" ] ; then
     dnf install --assumeyes qemu-kvm bridge-utils virt-manager git-core libguestfs-tools jq dnsmasq libvirt virt-install @virtualization
 else
-    apt install --yes qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager git-core libguestfs-tools jq software-properties-common dnsmasq
+    apt install --yes qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virt-manager git-core libguestfs-tools jq software-properties-common dnsmasq genisoimage
 fi
 echo "Install complete"
 
